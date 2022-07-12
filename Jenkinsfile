@@ -5,6 +5,7 @@ pipeline {
             agent {
                 docker {
                     image 'maven:3.8.5-openjdk-17'
+                    args '-v $HOME/.m2:/root/.m2'
                 }
             }
             steps {
@@ -21,9 +22,9 @@ pipeline {
         stage('Docker Push') {
             withCredentials([usernamePassword(
             credentialsId: 'docker-hub',
-            passwordVariable: 'docker-hubPassword',
-            usernameVariable: 'docker-hubUser')]){
-                sh "docker login -u ${env.docker-hubUser} -p ${env.docker-hubPassword}"
+            passwordVariable: 'PASSWORD',
+            usernameVariable: 'USERNAME')]){
+                sh "docker login -u ${env.USERNAME} -p ${env.PASSWORD}"
                 sh 'docker push wojberni/spring_demo:latest'
             }
         }
