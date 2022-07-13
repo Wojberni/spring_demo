@@ -9,13 +9,14 @@ pipeline {
                 }
             }
             steps {
+                sh 'echo "Maven Install"'
                 sh 'mvn clean install'
             }
         }
         stage('Docker Build') {
         agent any
             steps {
-                sh 'echo "Build"'
+                sh 'echo "Docker Build"'
                 sh 'docker build -t wojberni/spring_demo:latest .'
             }
         }
@@ -25,7 +26,8 @@ pipeline {
                     credentialsId: 'docker-hub',
                     passwordVariable: 'DOCKERHUB_PASSWORD',
                     usernameVariable: 'DOCKERHUB_USERNAME')]){
-                    sh "docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD"
+                    sh 'echo "Docker Push"'
+                    sh 'docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD'
                     sh 'docker push wojberni/spring_demo:latest'
                 }
             }

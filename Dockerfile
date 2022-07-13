@@ -1,4 +1,4 @@
 FROM openjdk
-
-COPY /target/spring_demo.jar /home/spring_demo.jar
-CMD ["java", "-jar", "/home/spring_demo.jar"]
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} spring_demo.jar
+ENTRYPOINT ["java", "-jar", "spring_demo.jar"]
