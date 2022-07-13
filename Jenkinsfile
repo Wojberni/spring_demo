@@ -20,13 +20,16 @@ pipeline {
             }
         }
         stage('Docker Push') {
-            withCredentials([usernamePassword(
-            credentialsId: 'docker-hub',
-            passwordVariable: 'DOCKERHUB_PASSWORD',
-            usernameVariable: 'DOCKERHUB_USERNAME')]){
-                sh "docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD"
-                sh 'docker push wojberni/spring_demo:latest'
+            script {
+                withCredentials([usernamePassword(
+                    credentialsId: 'docker-hub',
+                    passwordVariable: 'DOCKERHUB_PASSWORD',
+                    usernameVariable: 'DOCKERHUB_USERNAME')]){
+                    sh "docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD"
+                    sh 'docker push wojberni/spring_demo:latest'
+                }
             }
+
         }
 
         stage('Test') {
