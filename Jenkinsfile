@@ -8,9 +8,9 @@ pipeline {
         stage('Maven Install') {
             steps {
                 sh 'echo "Maven Install"'
-                withMaven {
-                    sh 'mvn clean install'
-                }
+//                 withMaven {
+//                     sh 'mvn clean install'
+//                 }
             }
         }
         stage('Docker Build') {
