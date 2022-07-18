@@ -1,35 +1,37 @@
 pipeline {
     agent any
+    tools {
+        maven 'maven-3.8.6'
+        docker 'docker-latest'
+    }
     stages {
         stage('Maven Install') {
-            agent {
-                docker {
-                    image 'maven:3.8.5-openjdk-17'
-                    args '-v $HOME/.m2:/root/.m2'
-                    reuseNode true
-                }
-            }
             steps {
                 sh 'echo "Maven Install"'
-                sh 'mvn clean install'
+                withMaven {
+                    sh 'mvn clean install'
+                }
             }
         }
         stage('Docker Build') {
-        agent any
             steps {
                 sh 'echo "Docker Build"'
-                sh 'docker build -t wojberni/spring_demo:latest .'
+                docker {
+                    sh 'docker build -t wojberni/spring_demo:latest .'
+                }
             }
         }
         stage('Docker Push') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'docker-hub',
-                    passwordVariable: 'DOCKERHUB_PASSWORD',
-                    usernameVariable: 'DOCKERHUB_USERNAME')]){
-                    sh 'echo "Docker Push"'
-                    sh 'docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD'
-                    sh 'docker push wojberni/spring_demo:latest'
+                docker {
+                    withCredentials([usernamePassword(
+                                    credentialsId: 'docker-hub',
+                                    passwordVariable: 'DOCKERHUB_PASSWORD',
+                                    usernameVariable: 'DOCKERHUB_USERNAME')]){
+                                    sh 'echo "Docker Push"'
+                                    sh 'docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD'
+                                    sh 'docker push wojberni/spring_demo:latest'
+                    }
                 }
             }
 
