@@ -68,7 +68,7 @@ spec:
         stage('Docker Build') {
             steps {
                 container('docker-cmds') {
-                    sh 'docker build -t wojciechbernatek/spring_demo:latest .'
+                    sh 'docker build -t wojciechbernatek/spring_demo/Marcin .'
                 }
             }
         }
@@ -80,7 +80,7 @@ spec:
                                     passwordVariable: 'DOCKERHUB_PASSWORD',
                                     usernameVariable: 'DOCKERHUB_USERNAME')]){
                                     sh 'docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD'
-                                    sh 'docker push wojciechbernatek/spring_demo:latest'
+                                    sh 'docker push wojciechbernatek/spring_demo/Marcin'
                     }
                 }
             }
