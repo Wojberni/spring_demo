@@ -1,52 +1,72 @@
 pipeline {
-    agent any
-    tools {
-        maven 'maven-3.8.6'
-        dockerTool 'docker-latest'
+    agent {
+        kubernetes {
+            yaml '''
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: jnlp
+    image: jenkins/inbound-agent
+    args: ['-disableHttpsCertValidation', '\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
+  - name: git-cmds
+    image: alpine/git
+    command:
+    - sleep
+    args:
+    - infinity
+    securityContext:
+        privileged: true
+    volumeMounts:
+      - name: docker-graph-storage
+        mountPath: /var/lib/docker
+  - name: docker-cmds
+    image: docker:19
+    command:
+    - sleep
+    args:
+    - infinity
+    env:
+      - name: DOCKER_HOST
+        value: tcp://localhost:2375
+  - name: dind-daemon
+    image: docker:19-dind
+    command: [dockerd-entrypoint.sh]
+    env:
+      - name: DOCKER_TLS_CERTDIR
+        value: ""
+    securityContext:
+        privileged: true
+    volumeMounts:
+      - name: docker-graph-storage
+        mountPath: /var/lib/docker
+  volumes:
+    - name: docker-graph-storage
+      emptyDir: {}
+'''
+            defaultContainer 'git-cmds'
+        }
     }
+
     stages {
-        stage('Maven Install') {
-            steps {
-                sh 'echo "Maven Install"'
-//                 withMaven {
-//                     sh 'mvn clean install'
-//                 }
+        stage('Init') {
+          steps {
+            container('git-cmds') {
+                sh 'git clone https://github.com/docker/getting-started.git'
             }
+          }
         }
-        stage('Docker Build') {
+
+        stage('test') {
             steps {
-                sh 'echo "Docker Build"'
-                docker {
-                    sh 'docker build -t wojberni/spring_demo:latest .'
-                }
-            }
-        }
-        stage('Docker Push') {
-            steps {
-                docker {
-                    withCredentials([usernamePassword(
-                                    credentialsId: 'docker-hub',
-                                    passwordVariable: 'DOCKERHUB_PASSWORD',
-                                    usernameVariable: 'DOCKERHUB_USERNAME')]){
-                                    sh 'echo "Docker Push"'
-                                    sh 'docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD'
-                                    sh 'docker push wojberni/spring_demo:latest'
+              container('docker-cmds') {
+                    script {
+                      dir('getting-started') {
+                        sh "docker build -t my-image:${env.BUILD_ID} ./"
+                      }
                     }
                 }
-            }
-
-        }
-
-        stage('Test') {
-            steps {
-                sh 'echo "Test"'
-                // sh 'mvn test'
+              }
             }
         }
-        stage('Deploy') {
-            steps {
-                sh 'echo "Deploy"'
-            }
-        }
-    }
 }
