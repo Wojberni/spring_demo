@@ -12,7 +12,7 @@ spec:
         image: jenkins/inbound-agent
         args: ['disableHttpsCertValidation', '\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
       - name: maven-cmds
-        image: 3.8.6-openjdk-11
+        image: maven:3.8.6-openjdk-11
         command:
         - sleep
         args:
