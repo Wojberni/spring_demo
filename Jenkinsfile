@@ -68,7 +68,7 @@ spec:
         stage('Docker Build') {
             steps {
                 container('docker-cmds') {
-                    sh 'docker build -t wojciechbernatek/spring_demo:latest .'
+                    sh 'docker build -t kielmikolaj/repo:latest .'
                 }
             }
         }
@@ -76,11 +76,11 @@ spec:
             steps {
                 container('docker-cmds') {
                     withCredentials([usernamePassword(
-                                    credentialsId: 'docker-hub',
+                                    credentialsId: 'dockerhub_credentials_kielmikolaj123',
                                     passwordVariable: 'DOCKERHUB_PASSWORD',
                                     usernameVariable: 'DOCKERHUB_USERNAME')]){
                                     sh 'docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD'
-                                    sh 'docker push wojciechbernatek/spring_demo:latest'
+                                    sh 'docker push kielmikolaj/repo:latest'
                     }
                 }
             }
