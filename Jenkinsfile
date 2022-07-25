@@ -40,7 +40,7 @@ spec:
         command: [dockerd-entrypoint.sh]
         env:
         - name: DOCKER_TLS_CERTDIR
-        - value: ""
+          value: ""
         resources:
             requests:
                 cpu: 20m
