@@ -10,9 +10,9 @@ spec:
     containers:
       - name: jnlp
         image: jenkins/inbound-agent
-        args: ['disableHttpsCertValidation', '\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
+        args: ['-disableHttpsCertValidation', '\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
       - name: maven-cmds
-        image: alpine/git
+        image: maven:3.8.6-openjdk-11
         command:
         - sleep
         args:
