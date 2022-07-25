@@ -4,6 +4,8 @@ pipeline {
             yaml '''
 apiVersion: v1
 kind: Pod
+metadata:
+  name: dind-jenkins
 spec:
     containers:
       - name: jnlp
@@ -52,6 +54,7 @@ spec:
       - name: docker-graph-storage
         emptyDir: {}
 '''
+            defaultContainer 'docker-cmds'
         }
     }
     stages {
