@@ -76,7 +76,7 @@ spec:
             steps {
                 container('docker-cmds') {
                     withCredentials([usernamePassword(
-                                    credentialsId: 'dockerhub_credentials_kielmikolaj123',
+                                    credentialsId: 'kielmikolaj_dockerhub',
                                     passwordVariable: 'DOCKERHUB_PASSWORD',
                                     usernameVariable: 'DOCKERHUB_USERNAME')]){
                                     sh 'docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD'
