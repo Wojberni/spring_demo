@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spring_deployment
+  name: spring-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: spring_deployment
+      app: spring-deployment
   template:
-    metadana:
+    metadata:
       labels:
-        app: spring_deployment
+        app: spring-deployment
     spec:
       containers:
-        - name: spring_app
+        - name: spring-app
           image: muszeczka/spring_demo:latest
 ---
-apiVersion: apps/v1
+apiVersion: v1
 kind: Service
 metadata:
-  name: spring_service
+  name: spring-service
 spec:
   selector:
-    app: spring_service
+    app: spring-service
   ports:
-    -protocol: TCP
-     port: 80
-     targetPort: 5432
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
